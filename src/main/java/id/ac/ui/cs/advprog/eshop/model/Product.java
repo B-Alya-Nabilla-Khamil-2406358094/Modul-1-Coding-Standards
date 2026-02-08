@@ -1,9 +1,9 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
-import lombok.getter;
-import lombok.setter;
+import lombok.Getter;
+import lombok.Setter;
 
-@getter @setter
+@Getter @Setter
 public class Product {
     private String productId;
     private String productName;
