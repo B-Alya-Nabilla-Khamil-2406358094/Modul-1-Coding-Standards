@@ -2,17 +2,52 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>ADV Shop</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ADV Shop - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 </head>
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<div class="container jumbotron mt-5">
-    <h3>Welcome</h3>
-    <p>Welcome to ADV Shop, your simple e-commerce solution.</p>
-    <hr class="my-4">
-    <a class="btn btn-primary btn-lg" th:href="@{/product/list}" role="button">View Products</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">ADV Shop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/product/list}">Products</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/product/create}">Create</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container my-auto">
+    <div class="p-5 mb-4 bg-white rounded-3 shadow text-center">
+        <div class="container-fluid py-5">
+            <h1 class="display-4 fw-bold text-primary">Welcome to ADV Shop</h1>
+            <p class="col-md-8 fs-4 mx-auto text-muted">Your reliable simple e-commerce solution. Manage your inventory efficiently and effectively.</p>
+            <div class="mt-4">
+                <a class="btn btn-primary btn-lg px-4 gap-3" th:href="@{/product/list}" role="button">
+                    <i class="bi bi-box-seam"></i> View Products
+                </a>
+                <a class="btn btn-outline-secondary btn-lg px-4" th:href="@{/product/create}" role="button">
+                    Add New Item
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
+<footer class="footer mt-auto py-3 bg-dark text-white text-center">
+    <div class="container">
+        <span class="text-white-50">&copy; 2024 ADV Shop. All rights reserved.</span>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
