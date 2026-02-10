@@ -13,14 +13,14 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateProductFunctionalTest {
+class DeleteProductFunctionalTest {
 
     @LocalServerPort
     private int serverPort;
-
     private WebDriver driver;
     private String baseUrl;
 
@@ -44,19 +44,22 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void testCreateProduct_isSuccessful() {
+    void testDeleteProduct_isSuccessful() {
 
-        driver.get(baseUrl + "/list");
-
-        driver.findElement(By.partialLinkText("Create Product")).click();
-
-        driver.findElement(By.id("nameInput")).sendKeys("Laptop Gaming ASUS");
-        driver.findElement(By.id("quantityInput")).sendKeys("5");
-
+        driver.get(baseUrl + "/create");
+        driver.findElement(By.id("nameInput")).sendKeys("Keyboard Bekas");
+        driver.findElement(By.id("quantityInput")).sendKeys("2");
         driver.findElement(By.cssSelector("button[type='submit']")).click();
 
+        assertTrue(driver.getPageSource().contains("Keyboard Bekas"));
+
+        WebElement deleteButton = driver.findElement(By.xpath("//td[contains(text(), 'Keyboard Bekas')]/following-sibling::td//a[contains(text(), 'Delete')]"));
+        deleteButton.click();
+
+        driver.switchTo().alert().accept();
+
         String pageSource = driver.getPageSource();
-        assertTrue(pageSource.contains("Product List"));
-        assertTrue(pageSource.contains("Laptop Gaming ASUS"));
+
+        assertFalse(pageSource.contains("Keyboard Bekas"));
     }
 }

@@ -16,11 +16,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateProductFunctionalTest {
+class EditProductFunctionalTest {
 
     @LocalServerPort
     private int serverPort;
-
     private WebDriver driver;
     private String baseUrl;
 
@@ -44,19 +43,25 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void testCreateProduct_isSuccessful() {
+    void testEditProduct_isSuccessful() {
 
-        driver.get(baseUrl + "/list");
+        driver.get(baseUrl + "/create");
+        driver.findElement(By.id("nameInput")).sendKeys("Mouse Rusak");
+        driver.findElement(By.id("quantityInput")).sendKeys("10");
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
 
-        driver.findElement(By.partialLinkText("Create Product")).click();
 
-        driver.findElement(By.id("nameInput")).sendKeys("Laptop Gaming ASUS");
-        driver.findElement(By.id("quantityInput")).sendKeys("5");
+        WebElement editButton = driver.findElement(By.xpath("//td[contains(text(), 'Mouse Rusak')]/following-sibling::td//a[contains(text(), 'Edit')]"));
+        editButton.click();
+
+        WebElement nameInput = driver.findElement(By.id("nameInput"));
+        nameInput.clear();
+        nameInput.sendKeys("Mouse Logitech Bagus");
 
         driver.findElement(By.cssSelector("button[type='submit']")).click();
 
         String pageSource = driver.getPageSource();
-        assertTrue(pageSource.contains("Product List"));
-        assertTrue(pageSource.contains("Laptop Gaming ASUS"));
+        assertTrue(pageSource.contains("Mouse Logitech Bagus"));
+        assertTrue(!pageSource.contains("Mouse Rusak"));
     }
 }
