@@ -1,53 +1,74 @@
 package id.ac.ui.cs.advprog.eshop.functional;
 
-import io.github.bonigarcia.seljup.SeleniumJupiter;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.beans.factory.annotation.Value;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@ExtendWith(SeleniumJupiter.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class HomePageFunctionalTest {
+
     @LocalServerPort
     private int serverPort;
 
-    @Value("${app.baseUrl:http://localhost}")
-    private String testBaseUrl;
-
+    private WebDriver driver;
     private String baseUrl;
 
+    @BeforeAll
+    static void setDriver() {
+        WebDriverManager.chromedriver().setup();
+    }
+
     @BeforeEach
-    void setupTest() {
-        baseUrl = String.format("%s:%d", testBaseUrl, serverPort);
+    void setup() {
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");
+        options.addArguments("--remote-allow-origins=*");
+        driver = new ChromeDriver(options);
+        baseUrl = "http://localhost:" + serverPort + "/product";
+    }
+
+    @AfterEach
+    void tearDown() {
+        driver.quit();
     }
 
     @Test
-    void pageTitle_isCorrect(ChromeDriver driver) throws Exception {
-        // Exercise
-        driver.get(baseUrl);
+    void pageTitle_isCorrect() throws Exception {
+        driver.get("http://localhost:" + serverPort + "/");
+
         String pageTitle = driver.getTitle();
-
-        // Verify
-        assertEquals("ADV Shop", pageTitle);
+        assertEquals("ADV Shop - Home", pageTitle);
     }
 
     @Test
-    void welcomeMessage_homePage_isCorrect(ChromeDriver driver) throws Exception {
-        // Exercise
-        driver.get(baseUrl);
-        String welcomeMessage = driver.findElement(By.tagName("h3"))
-                .getText();
+    void welcomeMessage_homePage_isCorrect() throws Exception {
+        driver.get("http://localhost:" + serverPort + "/");
 
-        // Verify
-        assertEquals("Welcome", welcomeMessage);
+        // HTML Baru menggunakan <h1> untuk welcome message
+        String welcomeMessage = driver.findElement(By.tagName("h1")).getText();
+        assertEquals("Welcome to ADV Shop", welcomeMessage);
     }
 
+    @Test
+    void checkButtons_areAvailable() throws Exception {
+        driver.get("http://localhost:" + serverPort + "/");
+
+        WebElement viewProductBtn = driver.findElement(By.cssSelector("a.btn-primary"));
+        assertTrue(viewProductBtn.getText().contains("View Products"));
+
+        WebElement createProductBtn = driver.findElement(By.cssSelector("a.btn-outline-secondary"));
+        assertTrue(createProductBtn.getText().contains("Add New Item"));
+    }
 }
