@@ -53,4 +53,13 @@ Selama mengerjakan *exercise* ini, saya menemukan dan memperbaiki beberapa isu *
   * **Strategi:** Menambahkan atribut `integrity` (berisi *hash* kriptografi) dan `crossorigin="anonymous"` pada elemen `<link>` dan `<script>`. Hal ini mengaktifkan *Subresource Integrity* (SRI) sehingga *browser* akan menolak menjalankan *script* jika file di CDN dimanipulasi pihak luar.
 * **Aksesibilitas dan Semantik HTML:** Terdapat peringatan *"Anchor tags should not be used as buttons"* pada `ProductList.html` dan penggunaan *role button* yang kurang tepat pada `homePage.html`.
   * **Strategi:** Memperbaiki struktur HTML dengan elemen `<button>` yang sesungguhnya untuk interaksi klik, serta menambahkan *event listener* berbasis *keyboard* (seperti `onKeyDown`) agar web lebih ramah *screen reader*.
-* **Code Smell pada Unit Test:**
+* **Code Smell pada Unit Test:** Ditemukan *method* kosong pada `EshopApplicationTests.java` dan `ProductRepositoryTest.java` yang dapat membingungkan *developer* lain.
+  * **Strategi:** Menambahkan *nested comment* di dalam *method* tersebut untuk menjelaskan tujuannya secara eksplisit (misal: hanya untuk memverifikasi *application context load*).
+
+### 2. CI/CD Implementation Evaluation
+Menurut saya, implementasi yang saya terapkan saat ini sudah sepenuhnya memenuhi definisi **Continuous Integration (CI)** dan **Continuous Deployment (CD)**.
+
+* **Continuous Integration:** Saya menggunakan GitHub Actions yang secara otomatis menjalankan *test suite* dan menganalisis kualitas kode menggunakan SonarCloud setiap kali ada *push* atau *pull request*. Hal ini memastikan setiap perubahan kode terverifikasi aman sebelum digabungkan.
+* **Continuous Deployment:** Saya menggunakan platform Koyeb dengan pendekatan *pull-based* yang terhubung langsung ke repositori GitHub. Setiap kali kode di-*merge* ke *branch* `main`, Koyeb mendeteksi perubahan tersebut dan langsung melakukan *auto-deploy* ke server publik tanpa campur tangan manual.
+
+Siklus otomatis dari tahap pengetesan hingga aplikasi siap diakses oleh pengguna inilah yang mencerminkan praktik CI/CD yang komprehensif.
