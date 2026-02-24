@@ -1,9 +1,3 @@
-val seleniumJavaVersion = "4.14.1"
-val seleniumJupiterVersion = "5.0.1"
-val webdrivermanagerVersion = "5.6.3"
-val junitJupiterVersion = "5.9.1"
-
-
 plugins {
     java
     jacoco
@@ -15,6 +9,11 @@ plugins {
 group = "id.ac.ui.cs.advprog"
 version = "0.0.1-SNAPSHOT"
 description = "eshop"
+
+val seleniumJavaVersion = "4.14.1"
+val seleniumJupiterVersion = "5.0.1"
+val webdrivermanagerVersion = "5.6.3"
+val junitJupiterVersion = "5.9.1"
 
 java {
     toolchain {
@@ -50,6 +49,11 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
+
 tasks.register<Test>("unitTest") {
     description = "Runs unit tests."
     group = "verification"
@@ -66,10 +70,6 @@ tasks.register<Test>("functionalTest") {
     filter {
         includeTestsMatching("*FunctionalTest")
     }
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }
 
 tasks.test {
@@ -94,5 +94,6 @@ sonar {
         property("sonar.organization", "b-alya-nabilla-khamil-2406358094")
         property("sonar.host.url", "https://sonarcloud.io")
         property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+        property("sonar.exclusions", "**/model/**, **/EshopApplication.java")
     }
 }
