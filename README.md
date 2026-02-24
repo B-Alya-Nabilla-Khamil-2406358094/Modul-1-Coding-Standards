@@ -63,3 +63,5 @@ Menurut saya, implementasi yang saya terapkan saat ini sudah sepenuhnya memenuhi
 * **Continuous Deployment:** Saya menggunakan platform Koyeb dengan pendekatan *pull-based* yang terhubung langsung ke repositori GitHub. Setiap kali kode di-*merge* ke *branch* `main`, Koyeb mendeteksi perubahan tersebut dan langsung melakukan *auto-deploy* ke server publik tanpa campur tangan manual.
 
 Siklus otomatis dari tahap pengetesan hingga aplikasi siap diakses oleh pengguna inilah yang mencerminkan praktik CI/CD yang komprehensif.
+<img width="566" height="103" alt="image" src="https://github.com/user-attachments/assets/06ce908c-b95c-4888-abd5-7d71fa5f8d13" />
+
