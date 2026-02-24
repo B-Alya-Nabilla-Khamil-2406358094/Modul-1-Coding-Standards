@@ -20,6 +20,7 @@ class ProductRepositoryTest {
 
     @BeforeEach
     void setup() {
+        productRepository = new ProductRepository();
     }
 
     @Test
@@ -37,6 +38,12 @@ class ProductRepositoryTest {
         assertEquals(product.getProductId(), savedProduct.getProductId());
         assertEquals(product.getProductName(), savedProduct.getProductName());
         assertEquals(product.getProductQuantity(), savedProduct.getProductQuantity());
+    }
+
+    @Test
+    void testFindByIdNotFound() {
+        Product foundProduct = productRepository.findById("tidak-ada");
+        assertNull(foundProduct);
     }
 
     @Test
@@ -148,5 +155,45 @@ class ProductRepositoryTest {
 
         assertNotNull(product.getProductId());
         assertFalse(product.getProductId().isEmpty());
+    }
+
+    @Test
+    void testFindByIdIfMoreThanOneProduct() {
+
+        Product product1 = new Product();
+        product1.setProductId("1");
+        productRepository.create(product1);
+
+        Product product2 = new Product();
+        product2.setProductId("2");
+        productRepository.create(product2);
+
+        Product foundProduct = productRepository.findById("2");
+        assertNotNull(foundProduct);
+        assertEquals("2", foundProduct.getProductId());
+    }
+
+    @Test
+    void testEditIfProductNotFoundButListNotEmpty() {
+        Product product1 = new Product();
+        product1.setProductId("1");
+        productRepository.create(product1);
+
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("2");
+        updatedProduct.setProductName("Barang Baru");
+
+        Product result = productRepository.edit(updatedProduct);
+        assertNull(result);
+    }
+
+    @Test
+    void testDeleteIfProductNotFoundButListNotEmpty() {
+        Product product1 = new Product();
+        product1.setProductId("1");
+        productRepository.create(product1);
+
+        productRepository.delete("2");
+        assertNotNull(productRepository.findById("1"));
     }
 }
