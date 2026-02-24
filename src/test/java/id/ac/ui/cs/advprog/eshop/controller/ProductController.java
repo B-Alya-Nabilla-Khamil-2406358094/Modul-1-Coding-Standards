@@ -2,27 +2,39 @@ package id.ac.ui.cs.advprog.eshop.controller;
 
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.ProductService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(ProductController.class)
+@ExtendWith(MockitoExtension.class)
 class ProductControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private ProductService productService;
+    @Mock
+    private ProductService service;
+
+    @InjectMocks
+    private ProductController controller;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
 
     @Test
     void testCreateProductPage() throws Exception {
@@ -33,48 +45,49 @@ class ProductControllerTest {
     }
 
     @Test
-    void testCreateProductPost() throws Exception {
+    void testCreateProductPostValid() throws Exception {
         mockMvc.perform(post("/product/create")
-                        .param("productName", "Teh Botol")
-                        .param("productQuantity", "10"))
+                        .param("productName", "Sampo Cap Bambang")
+                        .param("productQuantity", "100"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("list"));
 
-        Mockito.verify(productService, Mockito.times(1)).create(Mockito.any(Product.class));
+        verify(service, times(1)).create(any(Product.class));
     }
 
     @Test
     void testProductListPage() throws Exception {
-        Product p1 = new Product(); p1.setProductName("Teh");
-        Mockito.when(productService.findAll()).thenReturn(Arrays.asList(p1));
+        List<Product> allProducts = new ArrayList<>();
+        when(service.findAll()).thenReturn(allProducts);
 
         mockMvc.perform(get("/product/list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("productList"))
-                .andExpect(model().attributeExists("products"));
+                .andExpect(model().attribute("products", allProducts));
     }
 
     @Test
     void testEditProductPage() throws Exception {
-        Product p = new Product(); p.setProductId("123");
-        Mockito.when(productService.findById("123")).thenReturn(p);
+        Product product = new Product();
+        product.setProductId("123");
+        when(service.findById("123")).thenReturn(product);
 
         mockMvc.perform(get("/product/edit/123"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editProduct"))
-                .andExpect(model().attributeExists("product"));
+                .andExpect(model().attribute("product", product));
     }
 
     @Test
-    void testEditProductPost() throws Exception {
+    void testEditProductPostValid() throws Exception {
         mockMvc.perform(post("/product/edit")
                         .param("productId", "123")
-                        .param("productName", "Teh Pucuk")
-                        .param("productQuantity", "20"))
+                        .param("productName", "Sampo Baru")
+                        .param("productQuantity", "50"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("list"));
 
-        Mockito.verify(productService, Mockito.times(1)).update(Mockito.any(Product.class));
+        verify(service, times(1)).update(any(Product.class));
     }
 
     @Test
@@ -83,6 +96,6 @@ class ProductControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/product/list"));
 
-        Mockito.verify(productService, Mockito.times(1)).deleteProductById("123");
+        verify(service, times(1)).deleteProductById("123");
     }
 }
