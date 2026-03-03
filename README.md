@@ -66,4 +66,32 @@ Siklus otomatis dari tahap pengetesan hingga aplikasi siap diakses oleh pengguna
 <img width="566" height="103" alt="image" src="https://github.com/user-attachments/assets/06ce908c-b95c-4888-abd5-7d71fa5f8d13" />
 <img width="956" height="167" alt="image" src="https://github.com/user-attachments/assets/1473e562-4691-4f47-a191-547be70a690a" />
 
+## Refleksi Modul 3 — SOLID Principles
 
+### 1. Prinsip yang Diterapkan
+
+**SRP:** Memisahkan `CarController` dari `ProductController` ke file tersendiri. Sebelumnya satu file memuat dua class dengan tanggung jawab berbeda.
+
+**OCP:** Interface `CarService` memungkinkan penambahan implementasi baru tanpa mengubah kode yang sudah ada. Contoh: bisa buat `CarServiceImplV2` tanpa menyentuh `CarController`. Selain itu, dengan menghapus inheritance `CarController extends ProductController` (penerapan LSP), secara tidak langsung OCP juga terpenuhi — `ProductController` kini tertutup untuk modifikasi akibat perubahan kebutuhan Car, karena `CarController` tidak lagi bergantung padanya. Perubahan pada fitur Car cukup dilakukan di `CarController` sendiri tanpa menyentuh `ProductController`.
+
+**LSP:** Menghapus `CarController extends ProductController` karena tidak ada hubungan "is-a" yang valid. Sebelumnya `CarController` mewarisi `ProductController` padahal tidak bisa menggantikan `ProductController` secara behavioral — keduanya menangani entitas yang berbeda. Setelah perbaikan, `CarController` berdiri sendiri sebagai class independen sehingga tidak ada risiko pelanggaran substitusi.
+
+**ISP:** `CarService` hanya berisi method yang relevan untuk operasi Car (`create`, `findAll`, `findById`, `update`, `deleteCarById`), sehingga client (`CarController`) tidak dipaksa bergantung pada method yang tidak dibutuhkan. Jika di masa depan ada kebutuhan operasi yang berbeda, cukup buat interface baru yang lebih spesifik tanpa mengubah `CarService` yang sudah ada. Dengan demikian ISP dan OCP saling mendukung — interface yang sudah terdefinisi dengan baik tidak perlu dimodifikasi ketika ada kebutuhan baru.
+
+**DIP:** Mengganti dependency `CarServiceImpl` (konkret) menjadi `CarService` (interface) di `CarController`. Modul tingkat tinggi tidak bergantung pada modul tingkat rendah.
+
+### 2. Keuntungan Menerapkan SOLID
+
+- **SRP:** Bug di logika Car langsung dicari di `CarController.java`, tidak tercampur dengan logika Product. Tim bisa kerja paralel tanpa konflik Git.
+- **OCP:** Menambah fitur baru tidak berisiko merusak fitur yang sudah berjalan. Penerapan LSP secara langsung membantu OCP — dengan memisahkan `CarController` dari `ProductController`, perubahan pada salah satu tidak mempengaruhi yang lain.
+- **LSP:** Tidak ada method warisan dari `ProductController` yang ter-expose secara tidak sengaja di endpoint `/car`. Kode lebih prediktable dan mudah di-maintain.
+- **ISP:** `CarController` hanya tahu method yang ia butuhkan. Jika `CarService` diperluas di masa depan, client lain tidak terdampak.
+- **DIP:** Jika implementasi service diganti (misal pakai database), controller tidak perlu diubah sama sekali.
+
+### 3. Kerugian Tidak Menerapkan SOLID
+
+- **Tanpa SRP:** `ProductController.java` memuat logika Car dan Product sekaligus, menyulitkan debugging dan menyebabkan konflik Git saat pengerjaan paralel.
+- **Tanpa OCP:** Setiap kali ada fitur baru, kode lama harus diubah dan berpotensi memunculkan bug baru pada fitur yang sebelumnya sudah berjalan dengan baik.
+- **Tanpa LSP:** Inheritance yang salah seperti `CarController extends ProductController` bisa menyebabkan method Product ikut ter-expose di endpoint `/car` secara tidak sengaja, dan perilaku program menjadi tidak konsisten.
+- **Tanpa ISP:** Jika `CarService` memiliki method yang tidak relevan untuk `CarController`, setiap perubahan pada method tersebut tetap berdampak pada semua client yang mengimplementasikan interface itu, meskipun mereka tidak menggunakannya.
+- **Tanpa DIP:** Jika `CarController` langsung bergantung pada `CarServiceImpl`, proses testing dengan mock service membutuhkan perubahan banyak kode, dan mengganti implementasi service berarti harus mengubah controller juga.
